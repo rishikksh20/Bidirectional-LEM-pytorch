@@ -9,7 +9,7 @@ from lem import BidirectionalSeqLEM
 
 input = torch.ones([2, 1, 784])    # Size : [B, dim, seq_len]
 
-model = BidirectionalSeqLEM( ninp = 1, nhid = 128, dt = 0.3)
+model = BidirectionalSeqLEM( ninp = 1, nhid = 128)
 
 ys, zs = model(input.permute(2, 0, 1)) # ys shape : [seq_len, B, 2 * dim], zs shape : [seq_len, B, 2 * dim]
 
