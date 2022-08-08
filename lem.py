@@ -46,3 +46,50 @@ class LEM(nn.Module):
         for x in input:
             y, z = self.cell(x,y,z)
         return y
+    
+class SeqLEM(nn.Module):
+    def __init__(self, ninp, nhid, nout, dt=1.):
+        super(SeqLEM, self).__init__()
+        self.nhid = nhid
+        self.cell = LEMCell(ninp,nhid,dt)
+        
+
+    def forward(self, input):
+      y_ = list()
+      z_ = list()
+      ## initialize hidden states
+      y = input.data.new(input.size(1), self.nhid).zero_()
+      z = input.data.new(input.size(1), self.nhid).zero_()
+
+      for x in input:
+          y, z = self.cell(x,y,z)
+          y_.append(y)
+          z_.append(z)
+      return torch.stack(y_), torch.stack(z_)
+
+
+class BidirectionalSeqLEM(nn.Module):
+    def __init__(self, ninp, nhid, nout, dt=1.):
+        super(BidirectionalSeqLEM, self).__init__()
+        self.nhid = nhid
+        self.forward_ = LEMCell(ninp, nhid, dt)
+        self.backward_ = LEMCell(ninp, nhid, dt)
+        
+
+    def forward(self, input):
+      ys = list()
+      zs = list()
+      ## initialize hidden states
+      y = input.data.new(input.size(1), self.nhid).zero_()
+      z = input.data.new(input.size(1), self.nhid).zero_()
+
+      y_ = input.data.new(input.size(1), self.nhid).zero_()
+      z_ = input.data.new(input.size(1), self.nhid).zero_()
+
+      max_len = input.shape[0]
+      for i in range(max_len):
+          y, z = self.forward_(input[i, :, :], y, z)
+          y_, z_ = self.backward_(input[max_len - i - 1, :, :], y_, z_)
+          ys.append(torch.cat([y, y_], dim=-1))
+          zs.append(torch.cat([z, z_], dim=-1))
+      return torch.stack(ys), torch.stack(zs)
