@@ -48,7 +48,7 @@ class LEM(nn.Module):
         return y
     
 class SeqLEM(nn.Module):
-    def __init__(self, ninp, nhid, nout, dt=1.):
+    def __init__(self, ninp, nhid, dt=1.):
         super(SeqLEM, self).__init__()
         self.nhid = nhid
         self.cell = LEMCell(ninp,nhid,dt)
@@ -69,7 +69,7 @@ class SeqLEM(nn.Module):
 
 
 class BidirectionalSeqLEM(nn.Module):
-    def __init__(self, ninp, nhid, nout, dt=1.):
+    def __init__(self, ninp, nhid, dt=1.):
         super(BidirectionalSeqLEM, self).__init__()
         self.nhid = nhid
         self.forward_ = LEMCell(ninp, nhid, dt)
