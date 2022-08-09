@@ -65,7 +65,7 @@ class SeqLEM(nn.Module):
           y, z = self.cell(x,y,z)
           y_.append(y)
           z_.append(z)
-      return torch.stack(y_), torch.stack(z_)
+      return torch.stack(y_)
 
 
 class BidirectionalSeqLEM(nn.Module):
@@ -92,4 +92,4 @@ class BidirectionalSeqLEM(nn.Module):
           y_, z_ = self.backward_(input[max_len - i - 1, :, :], y_, z_)
           ys.append(torch.cat([y, y_], dim=-1))
           zs.append(torch.cat([z, z_], dim=-1))
-      return torch.stack(ys), torch.stack(zs)
+      return torch.stack(ys)
